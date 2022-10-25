@@ -1,24 +1,29 @@
 package app
 
 import (
+	"net"
+
 	"OceanID/app/impls"
+	"OceanID/app/ocean_id"
 	"OceanID/config"
-	idService "OceanID/schemes/id_service"
+	"OceanID/schemes/id_service"
+
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"net"
 )
 
 type GrpcServer struct {
 	ctx      context.Context
 	listener net.Listener
+	oceanId  oceanID.OI
 	*grpc.Server
 }
 
-func NewGrpcApp(ctx context.Context) Application {
+func NewGrpcApp(ctx context.Context, oi oceanID.OI) Application {
 	return &GrpcServer{
-		ctx: ctx,
+		ctx:     ctx,
+		oceanId: oi,
 	}
 }
 
@@ -38,7 +43,8 @@ func (g *GrpcServer) Setup() error {
 
 	g.Server = grpc.NewServer()
 
-	idService.RegisterOceanIDServer(g.Server, &impls.OceanID{})
+	idService.RegisterOceanIDServer(g.Server, oceanID.Mount[*impls.OceanID](g.oceanId, &impls.OceanID{}))
+
 	return nil
 }
 

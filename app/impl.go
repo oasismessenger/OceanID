@@ -1,6 +1,7 @@
 package app
 
 import (
+	oceanID "OceanID/app/ocean_id"
 	"context"
 
 	"github.com/RealFax/pkg-ctl"
@@ -48,8 +49,12 @@ func (i *Implement) shutdownAll() (err error) {
 }
 
 func (i *Implement) Create() error {
+	oi, err := oceanID.NewOceanID(i.ctx)
+	if err != nil {
+		return errors.Wrap(err, "app.impl")
+	}
 	// mount app
-	i.mount(NewGrpcApp(i.ctx))
+	i.mount(NewGrpcApp(i.ctx, oi))
 
 	return i.setupAll()
 }
