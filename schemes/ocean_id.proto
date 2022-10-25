@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package idService;
+
+option go_package = "schemes/id_service/;idService";
+
+import "proto_types/enums.proto";
+
+message IDRequest {
+  Types.EnumDC DC = 1;
+  uint64 worker_id = 2;
+  uint64 request_id = 3;
+}
+
+message IDBulkRequest {
+  Types.EnumDC DC = 1;
+  uint32 worker_id = 2;
+  uint64 request_id = 3;
+  uint32 bulk_size = 4;
+}
+
+message IDReply {
+  int64 id = 1;
+  uint64 timestamp = 2;
+  uint64 reply_id = 3;
+}
+
+message IDBulkReply {
+  repeated int64 ids = 1;
+  uint64 timestamp = 2;
+  uint64 reply_id = 3;
+  uint32 size = 4;
+}
+
+service OceanID {
+  rpc GenerateID(IDRequest) returns (IDReply) {}
+  rpc BulkGenerateID(IDBulkRequest) returns (IDBulkReply) {}
+}

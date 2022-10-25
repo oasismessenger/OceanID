@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package Types;
+
+option go_package = "OceanID/schemes/types;";
+
+enum EnumDC {
+  DcAS = 0;
+  DcNA = 8;
+  DcEu = 16;
+}
