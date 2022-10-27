@@ -31,12 +31,16 @@ func (i *Implement) setupAll() (err error) {
 }
 
 func (i *Implement) startAll() (err error) {
+	erc := make(chan error, 1)
 	for _, service := range i.services {
-		if err = service.Start(); err != nil {
-			return errors.Wrapf(err, "service %s started failed", service.GetName())
-		}
+		service := service
+		go func() {
+			if err = service.Start(); err != nil {
+				erc <- errors.Wrapf(err, "app.impl service %s started failed", service.GetName())
+			}
+		}()
 	}
-	return nil
+	return <-erc
 }
 
 func (i *Implement) shutdownAll() (err error) {
