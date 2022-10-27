@@ -9,12 +9,12 @@ import (
 )
 
 type OceanID struct {
-	oceanID.OI
+	oceanId.IdPool
 	idService.UnimplementedOceanIDServer
 }
 
-func (o *OceanID) SetOI(oi oceanID.OI) {
-	o.OI = oi
+func (o *OceanID) SetOI(oi oceanId.IdPool) {
+	o.IdPool = oi
 }
 
 func (o *OceanID) GenerateID(_ context.Context, request *idService.IDRequest) (*idService.IDReply, error) {

@@ -16,11 +16,11 @@ import (
 type GrpcServer struct {
 	ctx      context.Context
 	listener net.Listener
-	oceanId  oceanID.OI
+	oceanId  oceanId.IdPool
 	*grpc.Server
 }
 
-func NewGrpcApp(ctx context.Context, oi oceanID.OI) Application {
+func NewGrpcApp(ctx context.Context, oi oceanId.IdPool) Application {
 	return &GrpcServer{
 		ctx:     ctx,
 		oceanId: oi,
@@ -43,7 +43,7 @@ func (g *GrpcServer) Setup() error {
 
 	g.Server = grpc.NewServer()
 
-	idService.RegisterOceanIDServer(g.Server, oceanID.Mount[*impls.OceanID](g.oceanId, &impls.OceanID{}))
+	idService.RegisterOceanIDServer(g.Server, oceanId.Mount[*impls.OceanID](g.oceanId, &impls.OceanID{}))
 
 	return nil
 }
