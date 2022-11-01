@@ -3,10 +3,11 @@ package oceanId
 import (
 	"OceanID/config"
 	"context"
-	"github.com/pkg/errors"
 	"log"
 	"sync/atomic"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 type idPool struct {
@@ -88,17 +89,19 @@ func (p *idPool) callOIP() {
 
 func (p *idPool) autoFillPool() {
 	fillSize := int64(p.mps)
+	if fillSize == 0 {
+		return
+	}
 	pSize := atomic.LoadInt64(&p.size)
 	if pSize <= int64(p.nps) {
 		fillSize = int64(p.mps) - pSize
 	}
 	addSize := 0
-	for i := 0; i < int(fillSize); i++ {
+	for addSize = 0; addSize < int(fillSize); addSize++ {
 		select {
 		case p.oip <- p.mister.GetID():
-			addSize++
 		default:
-			atomic.AddInt64(&p.size, int64(addSize))
+			atomic.AddInt64(&p.size, int64(addSize+1))
 			log.Printf("id pool filled, expected: %d, actual: %d", fillSize, addSize)
 			return
 		}
@@ -115,10 +118,9 @@ func (p *idPool) initPool() {
 }
 
 func (p *idPool) poolListener() {
-	counter := 0
-	counterLimit := int(p.nps / 10)
+	counter := uint64(0)
 	for {
-		if counter >= counterLimit {
+		if counter >= p.nps {
 			// call autoFill
 			p.autoFillPool()
 		}
