@@ -11,6 +11,10 @@
 
 正如描述中所说，他是一个很好的ID生成服务
 
+### 🔥新的
+
+来自OasisMessenger的客户端基于Golang: [github.com/oasismessenger/OceanIDClient](https://github.com/oasismessenger/OceanIDClient)
+
 ### 我该怎么通过gRPC去调用OceanID? 🤔
 
 不要担心，我们已经为你准备好了一个请求示例
