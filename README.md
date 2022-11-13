@@ -12,6 +12,10 @@
 
 As said in the description, he is a good id generation service
 
+### 🔥New
+
+The client from OasisMessenger is based on Golang: github.com/oasismessenger/OceanIDClient
+
 ### How to call the gRPC interface in OceanID?
 
 Don't worry, we provide an example 🤔
