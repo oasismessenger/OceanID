@@ -2,8 +2,8 @@ package impls
 
 import (
 	"OceanID/app/ocean_id"
-	idService "OceanID/schemes/id_service"
-	"encoding/json"
+	"OceanID/schemes/id_service"
+	jsoniter "github.com/json-iterator/go"
 	"io"
 	"net/http"
 	"time"
@@ -11,7 +11,7 @@ import (
 
 func RequestDecoder[T any](r io.Reader) (*T, error) {
 	var request T
-	if err := json.NewDecoder(r).Decode(&request); err != nil {
+	if err := jsoniter.ConfigFastest.NewDecoder(r).Decode(&request); err != nil {
 		return nil, err
 	}
 	return &request, nil
@@ -34,7 +34,7 @@ func (h *OceanIDHttp) GenerateID(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	json.NewEncoder(w).Encode(&idService.IDReply{
+	jsoniter.ConfigFastest.NewEncoder(w).Encode(&idService.IDReply{
 		Id:        id,
 		Timestamp: uint64(time.Now().UnixNano()),
 		ReplyId:   request.RequestId,
@@ -53,7 +53,7 @@ func (h *OceanIDHttp) BulkGenerateID(w http.ResponseWriter, r *http.Request) err
 		return err
 	}
 
-	json.NewEncoder(w).Encode(&idService.IDBulkReply{
+	jsoniter.ConfigFastest.NewEncoder(w).Encode(&idService.IDBulkReply{
 		Ids:       ids,
 		Timestamp: uint64(time.Now().UnixNano()),
 		ReplyId:   request.RequestId,
