@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	pkgCtl.SetupActive(units.Loader)
+	pkgCtl.Bootstrap(units.Loader)
 
 	var (
 		ctx, cancel = context.WithCancel(context.Background())

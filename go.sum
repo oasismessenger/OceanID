@@ -1,5 +1,7 @@
 github.com/RealFax/pkg-ctl v0.0.0-20221016114318-f3e2150ff2d0 h1:zz9GEkx12hnsW2ccpODxbgtalpNhqOLLlTyA0UY6jP4=
 github.com/RealFax/pkg-ctl v0.0.0-20221016114318-f3e2150ff2d0/go.mod h1:zE0uGQLQMGInc+l5mlcQnCdwF0dLie2HiD97TmO0nlc=
+github.com/RealFax/pkg-ctl v1.0.0 h1:eYhTVrB8H54jxZw0ZdDsYcFHwBdPq5tOkU6DKrEHSKI=
+github.com/RealFax/pkg-ctl v1.0.0/go.mod h1:zE0uGQLQMGInc+l5mlcQnCdwF0dLie2HiD97TmO0nlc=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/golang/protobuf v1.5.2 h1:ROPKBNFfQgOUMifHyP+KYbvpjbdoFNs+aK7DXlji0Tw=
 github.com/golang/protobuf v1.5.2/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiuN0vRsmY=

@@ -1,4 +1,4 @@
-package oceanId
+package oceanID
 
 import (
 	"bytes"
@@ -19,8 +19,8 @@ const (
 )
 
 type mist struct {
-	incr int64
-	mdp  string
+	incr   int64
+	mdPath string
 }
 
 type Mist interface {
@@ -39,7 +39,7 @@ func NewMist(mdp string) (Mist, error) {
 	} else {
 		log.Println("OceanID history file lost! reset to default value: 100")
 	}
-	return &mist{incr: incr, mdp: mdp}, nil
+	return &mist{incr: incr, mdPath: mdp}, nil
 }
 
 func (m *mist) GetID() int64 {
@@ -49,7 +49,7 @@ func (m *mist) GetID() int64 {
 }
 
 func (m *mist) WriteMetadata() error {
-	return utils.Write(m.mdp, bytes.NewBuffer(
+	return utils.Write(m.mdPath, bytes.NewBuffer(
 		utils.Int2Bytes(
 			atomic.LoadInt64(&m.incr),
 		),

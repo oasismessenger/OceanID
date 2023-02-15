@@ -1,4 +1,4 @@
-package oceanId
+package oceanID
 
 import (
 	"OceanID/config"
@@ -12,10 +12,10 @@ import (
 
 type idPool struct {
 	size int64
-	// mps Max pool size
-	mps uint64
-	// nps Min pool size
-	nps uint64
+	// maxPoolSize Max pool size
+	maxPoolSize uint64
+	// minPoolSize Min pool size
+	minPoolSize uint64
 
 	ctx    context.Context
 	mister Mist
@@ -24,12 +24,12 @@ type idPool struct {
 	counter chan struct{}
 }
 
-type IdPool interface {
+type IDPool interface {
 	BulkGetID(size int64) ([]int64, error)
 	GetID() (int64, error)
 }
 
-func NewOceanID(ctx context.Context) (IdPool, error) {
+func NewOceanID(ctx context.Context) (IDPool, error) {
 	args, err := config.AssertArgs(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "app.ocean_id.pool")
@@ -39,16 +39,16 @@ func NewOceanID(ctx context.Context) (IdPool, error) {
 		return nil, err
 	}
 	pool := &idPool{
-		size:    0,
-		mps:     args.Get("MAX_ID_POOL_SIZE").(uint64),
-		nps:     args.Get("MIN_ID_POOL_SIZE").(uint64),
-		ctx:     ctx,
-		mister:  mister,
-		oip:     nil,
-		counter: nil,
+		size:        0,
+		maxPoolSize: args.Get("MAX_ID_POOL_SIZE").(uint64),
+		minPoolSize: args.Get("MIN_ID_POOL_SIZE").(uint64),
+		ctx:         ctx,
+		mister:      mister,
+		oip:         nil,
+		counter:     nil,
 	}
 	pool.initPool()
-	go pool.mdsTicker()
+	go pool.metadataAutoSave()
 	go pool.poolListener()
 	return pool, nil
 }
@@ -88,13 +88,13 @@ func (p *idPool) callOIP() {
 }
 
 func (p *idPool) autoFillPool() {
-	fillSize := int64(p.mps)
+	fillSize := int64(p.maxPoolSize)
 	if fillSize == 0 {
 		return
 	}
 	pSize := atomic.LoadInt64(&p.size)
-	if pSize <= int64(p.nps) {
-		fillSize = int64(p.mps) - pSize
+	if pSize <= int64(p.minPoolSize) {
+		fillSize = int64(p.maxPoolSize) - pSize
 	}
 	addSize := 0
 	for addSize = 0; addSize < int(fillSize); addSize++ {
@@ -102,7 +102,7 @@ func (p *idPool) autoFillPool() {
 		case p.oip <- p.mister.GetID():
 		default:
 			atomic.AddInt64(&p.size, int64(addSize+1))
-			log.Printf("id pool filled, expected: %d, actual: %d", fillSize, addSize)
+			// log.Printf("id pool filled, expected: %d, actual: %d", fillSize, addSize)
 			return
 		}
 	}
@@ -111,8 +111,8 @@ func (p *idPool) autoFillPool() {
 }
 
 func (p *idPool) initPool() {
-	p.oip = make(chan int64, p.mps)
-	p.counter = make(chan struct{}, p.nps-p.nps/10)
+	p.oip = make(chan int64, p.maxPoolSize)
+	p.counter = make(chan struct{}, p.minPoolSize-p.minPoolSize/10)
 	// first fill this pool
 	p.autoFillPool()
 }
@@ -120,7 +120,7 @@ func (p *idPool) initPool() {
 func (p *idPool) poolListener() {
 	counter := uint64(0)
 	for {
-		if counter >= p.nps {
+		if counter >= p.minPoolSize {
 			// call autoFill
 			p.autoFillPool()
 		}
@@ -134,7 +134,7 @@ func (p *idPool) poolListener() {
 }
 
 // metadata save ticker
-func (p *idPool) mdsTicker() {
+func (p *idPool) metadataAutoSave() {
 	ticker := time.NewTicker(time.Minute * 1)
 	for {
 		select {

@@ -3,7 +3,7 @@ module OceanID
 go 1.19
 
 require (
-	github.com/RealFax/pkg-ctl v0.0.0-20221016114318-f3e2150ff2d0
+	github.com/RealFax/pkg-ctl v1.0.0
 	github.com/pkg/errors v0.9.1
 	golang.org/x/net v0.1.0
 	google.golang.org/grpc v1.50.1

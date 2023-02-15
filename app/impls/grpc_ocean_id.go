@@ -1,23 +1,23 @@
 package impls
 
 import (
+	"OceanID/app/ocean_id"
 	"context"
 	"time"
 
-	"OceanID/app/ocean_id"
 	"OceanID/schemes/id_service"
 )
 
-type OceanID struct {
-	oceanId.IdPool
+type OceanIDGrpc struct {
+	oceanID.IDPool
 	idService.UnimplementedOceanIDServer
 }
 
-func (o *OceanID) SetOI(oi oceanId.IdPool) {
-	o.IdPool = oi
+func (o *OceanIDGrpc) SetOI(oi oceanID.IDPool) {
+	o.IDPool = oi
 }
 
-func (o *OceanID) GenerateID(_ context.Context, request *idService.IDRequest) (*idService.IDReply, error) {
+func (o *OceanIDGrpc) GenerateID(_ context.Context, request *idService.IDRequest) (*idService.IDReply, error) {
 	id, err := o.GetID()
 	if err != nil {
 		return nil, err
@@ -29,8 +29,8 @@ func (o *OceanID) GenerateID(_ context.Context, request *idService.IDRequest) (*
 	}, nil
 }
 
-func (o *OceanID) BulkGenerateID(_ context.Context, request *idService.IDBulkRequest) (*idService.IDBulkReply, error) {
-	ids, err := o.BulkGetID(int64(request.GetBulkSize()))
+func (o *OceanIDGrpc) BulkGenerateID(_ context.Context, request *idService.IDBulkRequest) (*idService.IDBulkReply, error) {
+	ids, err := o.BulkGetID(int64(request.BulkSize))
 	if err != nil {
 		return nil, err
 	}
@@ -42,4 +42,4 @@ func (o *OceanID) BulkGenerateID(_ context.Context, request *idService.IDBulkReq
 	}, nil
 }
 
-func (o *OceanID) mustEmbedUnimplementedOceanIDServer() {}
+func (o *OceanIDGrpc) mustEmbedUnimplementedOceanIDServer() {}

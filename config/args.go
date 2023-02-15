@@ -21,13 +21,15 @@ func (a Args) Get(key string) any {
 const ArgsContextKey string = "ARGS"
 
 func parseArgs(ctx *context.Context) {
-	serverAddr := flag.String("addr", "127.0.0.1:11451", "grpc server listen addr")
-	maxIdPoolSize := flag.Uint64("mps", 50000, "OceanId max id pool size")
-	minIdPoolSize := flag.Uint64("nps", 5000, "OceanId min pool size")
-	idMdPath := flag.String("imp", "./id_data", "OceanId metadata path")
+	grpcServerAddr := flag.String("grpcAddr", "", "grpc server listen addr")
+	httpServerAddr := flag.String("httpAddr", "", "http server listen addr")
+	maxIdPoolSize := flag.Uint64("maxPoolSize", 50000, "OceanId max id pool size")
+	minIdPoolSize := flag.Uint64("minPoolSize", 5000, "OceanId min pool size")
+	idMdPath := flag.String("metadata", "./id_data", "OceanId metadata path")
 	flag.Parse()
 	*ctx = context.WithValue(*ctx, ArgsContextKey, Args{
-		"SERVER_ADDR":      *serverAddr,
+		"GRPC_SERVER_ADDR": *grpcServerAddr,
+		"HTTP_SERVER_ADDR": *httpServerAddr,
 		"MAX_ID_POOL_SIZE": *maxIdPoolSize,
 		"MIN_ID_POOL_SIZE": *minIdPoolSize,
 		"ID_METADATA_PATH": *idMdPath,

@@ -59,6 +59,7 @@ func (i *Implement) Create() error {
 	}
 	// mount app
 	i.mount(NewGrpcApp(i.ctx, oi))
+	i.mount(NewHttpServer(i.ctx, oi))
 
 	return i.setupAll()
 }
